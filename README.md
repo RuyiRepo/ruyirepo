@@ -13,7 +13,7 @@ A software repository infrastructure for RISC-V, supporting reliable supply of s
 
 已支持的软件 / Supported software
 
-| 软件包 / Package | 版本 / Version | Python 版本 / Python 版本 |
+| 软件包 / Package | 版本 / Version | ABI |
 | ---- | ---- | ---- |
 | cmake | 4.2.1 | cp310, cp311, cp312, cp313, cp314 |
 | cython | 3.0.6 | cp310, cp311, cp312, cp313, cp314 |
