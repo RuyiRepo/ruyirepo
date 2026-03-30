@@ -1,0 +1,33 @@
+# RuyiRepo
+
+面向 RISC-V 的软件仓基础设施，支撑面向 RISC-V 的软件包可靠供给。
+
+A software repository infrastructure for RISC-V, supporting reliable supply of software packages targeted for RISC-V.
+
+## Usage
+
+### PyPI
+
+- 地址(Repository)：https://ruyirepo.ruyicommunity.cn/pypi
+- 用例(Example)：pip install -i https://ruyirepo.ruyicommunity.cn/pypi/simple/ torch
+
+已支持的软件 / Supported software
+
+| 软件包 / Package | 版本 / Version | Python 版本 / Python 版本 |
+| ---- | ---- | ---- |
+| cmake | 4.2.1 | cp310, cp311, cp312, cp313, cp314 |
+| cython | 3.0.6 | cp310, cp311, cp312, cp313, cp314 |
+| cryptography | 46.0.4 | cp310, cp311, cp312, cp313, cp314 |
+| ninja | 1.13.0 | cp310, cp311, cp312, cp313, cp314 |
+| numpy | 2.4.2 | cp311, cp314 |
+| onnx | 1.20.0 | cp310, cp311 |
+| pillow | 11.0.0 | cp311, cp312, cp313, cp314 |
+| torch | 2.10.0 | cp310, cp311, cp312, cp313, cp314 |
+| torch | 2.9.0 | cp311, cp312, cp313, cp314 |
+
+## Feedback
+
+若使用中遇到问题，欢迎提交 [Issue](https://github.com/RuyiRepo/issues)。
+
+If you encounter any issues during use, you are welcome to submit an [Issue](https://github.com/RuyiRepo/issues).
+
