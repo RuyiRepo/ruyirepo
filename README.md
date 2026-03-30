@@ -8,10 +8,19 @@ A software repository infrastructure for RISC-V, supporting reliable supply of s
 
 ### PyPI
 
-- 地址(Repository)：https://ruyirepo.ruyicommunity.cn/pypi
-- 用例(Example)：pip install -i https://ruyirepo.ruyicommunity.cn/pypi/simple/ torch
+地址 / Repository:
 
-已支持的软件 / Supported software
+```bash
+https://ruyirepo.ruyicommunity.cn/pypi
+```
+
+用例 / Example:
+
+```bash
+pip install -i https://ruyirepo.ruyicommunity.cn/pypi/simple/ torch
+```
+
+已支持的软件 / Supported software:
 
 | 软件包 / Package | 版本 / Version | ABI |
 | ---- | ---- | ---- |
