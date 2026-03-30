@@ -1,6 +1,6 @@
 # RuyiRepo
 
-面向 RISC-V 的软件仓基础设施，支撑面向 RISC-V 的软件包可靠供给。
+面向 RISC-V 的开源制品仓库，实现 RISC-V 生态软件可靠供给。
 
 A software repository infrastructure for RISC-V, supporting reliable supply of software packages targeted for RISC-V.
 
