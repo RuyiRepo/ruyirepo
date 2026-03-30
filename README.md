@@ -2,7 +2,7 @@
 
 面向 RISC-V 的开源制品仓库，实现 RISC-V 生态软件可靠供给。
 
-A software repository infrastructure for RISC-V, supporting reliable supply of software packages targeted for RISC-V.
+An open-source artifact repository for RISC-V, supporting reliable supply of software packages targeted for RISC-V.
 
 ## Usage
 
