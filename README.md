@@ -33,6 +33,7 @@ pip install -i https://ruyirepo.ruyicommunity.cn/pypi/simple/ torch
 | pillow | 11.0.0 | cp311, cp312, cp313, cp314 |
 | torch | 2.10.0 | cp310, cp311, cp312, cp313, cp314 |
 | torch | 2.9.0 | cp311, cp312, cp313, cp314 |
+| torch | 2.8.0 | cp310, cp311, cp312, cp313  |
 
 ## Feedback
 
