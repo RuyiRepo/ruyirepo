@@ -1,28 +1,26 @@
-[中文](./README.zh.md) | [English](./README.md)
-
 # RuyiRepo
 
-An open-source artifact repository for RISC-V, supporting reliable supply of software packages targeted for RISC-V.
+面向 RISC-V 的开源制品仓库，实现 RISC-V 生态软件可靠供给。
 
 ## Usage
 
 ### PyPI
 
-Repository:
+地址:
 
 ```bash
 https://ruyirepo.ruyicommunity.cn/pypi
 ```
 
-Example:
+用例:
 
 ```bash
 pip install -i https://ruyirepo.ruyicommunity.cn/pypi/simple/ torch==2.10.0
 ```
 
-Supported software:
+已支持的软件:
 
-| Name | Version | ABI | Platform |
+| 软件包 | 版本 | ABI | 平台 |
 |---|---|---|---|
 | cffi | 2.0.0 | cp311,cp314 | manylinux_2_38_riscv64 |
 | cmake | 4.2.1 | none | manylinux_2_38_riscv64 |
@@ -84,5 +82,5 @@ Supported software:
 
 ## Feedback
 
-If you encounter any issues during use, you are welcome to submit an [Issue](https://github.com/RuyiRepo/issues).
+若使用中遇到问题，欢迎提交 [Issue](https://github.com/RuyiRepo/issues)。
 
