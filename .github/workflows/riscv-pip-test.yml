@@ -34,11 +34,7 @@ jobs:
             riscv-python-${{ matrix.python-version }}-
 
       - name: Run pip install test in RISC-V container
-<<<<<<< HEAD
-        id: pip_test_${{ matrix.python-version }}
-=======
         id: pip_test
->>>>>>> d1df719aa44ec80cd1cb6094a7c3c8011f4ab1f5
         uses: uraimo/run-on-arch-action@v3
         with:
           arch: riscv64
