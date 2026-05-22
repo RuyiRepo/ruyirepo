@@ -304,13 +304,11 @@ jobs:
 
             🔄 缓存状态: ${{ steps.cache-python.outputs.cache-hit == 'true' && '使用缓存 ✓' || '首次编译' }}
 
-            错误详情:
-            ${{ steps.pip_test_${{ matrix.python-version }}.outputs.error_log || '请查看上方 workflow 日志获取详细错误信息' }}
+            错误详情请查看完整日志:
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             ---
             此邮件由 GitHub Actions 自动发送
-
-            完整日志: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
       # 生成测试摘要
       - name: Generate summary
