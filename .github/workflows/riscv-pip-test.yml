@@ -26,105 +26,74 @@ jobs:
         env:
           OWNER: ${{ github.repository_owner }}
 
-      - name: Run pip install test in RISC-V container
-        id: pip_test
-        uses: uraimo/run-on-arch-action@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
         with:
-          arch: riscv64
-          base_image: ghcr.io/${{ steps.vars.outputs.owner_lowercase }}/riscv-python-${{ matrix.python-version }}:latest
-          githubToken: ${{ github.token }}
+          platforms: riscv64
 
-          run: |
-            set -e
+      - name: Test PyPI connectivity
+        run: |
+          # 直接运行您的预构建镜像
+          docker run --rm \
+            --platform linux/riscv64 \
+            ghcr.io/${{ steps.vars.outputs.owner_lowercase }}/riscv-python-${{ matrix.python-version }}:latest \
+            /bin/bash -c '
+              set -e
+              echo "=========================================="
+              echo "Python 版本: ${{ matrix.python-version }}"
+              echo "=========================================="
 
-            echo "=========================================="
-            echo "Python 版本: ${{ matrix.python-version }}"
-            echo "=========================================="
+              python3 --version
+              pip3 --version
 
-            # 显示版本信息
-            python3 --version
-            pip3 --version
+              echo "========== glibc 版本检查 =========="
+              GLIBC_VERSION=$(ldd --version | head -n1 | grep -oP "\d+\.\d+$" || echo "0.0")
+              echo "检测到的 glibc 版本: $GLIBC_VERSION"
 
-            # 显示系统信息
-            echo "========== 系统信息 =========="
-            uname -m
-            cat /etc/os-release | head -n 3
-            echo "==============================="
+              REQUIRED_VERSION="2.38"
+              if [ "$(printf "%s\n" "$REQUIRED_VERSION" "$GLIBC_VERSION" | sort -V | head -n1)" != "$REQUIRED_VERSION" ]; then
+                  echo "❌ 错误: glibc 版本 $GLIBC_VERSION < 要求的 $REQUIRED_VERSION"
+                  exit 1
+              fi
+              echo "✓ glibc 版本满足要求"
 
-            # 检查 glibc 版本 (需要 >= 2.38)
-            echo "========== glibc 版本检查 =========="
-            GLIBC_VERSION=$(ldd --version | head -n1 | grep -oP '\d+\.\d+$' || echo "0.0")
-            echo "检测到的 glibc 版本: $GLIBC_VERSION"
+              echo "========== 升级 pip =========="
+              pip3 install --upgrade pip
+              PIP_VERSION=$(pip3 --version | awk "{print \$2}")
+              echo "pip 版本: $PIP_VERSION"
 
-            # 比较版本号 (使用 awk 进行数值比较)
-            REQUIRED_VERSION="2.38"
-            if [ "$(printf '%s\n' "$REQUIRED_VERSION" "$GLIBC_VERSION" | sort -V | head -n1)" != "$REQUIRED_VERSION" ]; then
-                echo "❌ 错误: glibc 版本 $GLIBC_VERSION < 要求的 $REQUIRED_VERSION"
-                exit 1
-            fi
-            echo "✓ glibc 版本 $GLIBC_VERSION >= $REQUIRED_VERSION (通过)"
-            echo "====================================="
+              REQUIRED_PIP="26.0.1"
+              if [ "$(printf "%s\n" "$REQUIRED_PIP" "$PIP_VERSION" | sort -V | head -n1)" != "$REQUIRED_PIP" ]; then
+                  echo "❌ pip 版本不足"
+                  exit 1
+              fi
 
-            # 升级 pip 到所需版本
-            echo "========== 升级 pip 到 >= 26.0.1 =========="
-            pip3 install --upgrade pip
+              echo "========== 测试 PyPI 连通性 =========="
+              python3 -m venv /tmp/test_venv
+              source /tmp/test_venv/bin/activate
 
-            # 检查 pip 版本
-            PIP_VERSION=$(pip3 --version | awk '{print $2}')
-            echo "当前 pip 版本: $PIP_VERSION"
+              PACKAGES="numpy==2.2.4 torch==2.10.0 psutil==5.9.3"
+              FAILED=""
 
-            # 比较 pip 版本 (需要 >= 26.0.1)
-            REQUIRED_PIP="26.0.1"
-            if [ "$(printf '%s\n' "$REQUIRED_PIP" "$PIP_VERSION" | sort -V | head -n1)" != "$REQUIRED_PIP" ]; then
-                echo "❌ 错误: pip 版本 $PIP_VERSION < 要求的 $REQUIRED_PIP"
-                exit 1
-            fi
-            echo "✓ pip 版本 $PIP_VERSION >= $REQUIRED_PIP (通过)"
-            echo "============================================="
+              for pkg in $PACKAGES; do
+                  echo "测试安装: $pkg"
+                  if pip install -i https://ruyirepo.ruyicommunity.cn/pypi/simple/ "$pkg" --timeout 30; then
+                      echo "✓ $pkg 安装成功"
+                  else
+                      echo "❌ $pkg 安装失败"
+                      FAILED="$FAILED $pkg"
+                  fi
+              done
 
-            # 测试 PyPI 连通性
-            echo "========== 测试 PyPI 连通性 =========="
+              deactivate
 
-            # 创建虚拟环境
-            python -m venv /tmp/test_venv_${{ matrix.python-version }}
-            source /tmp/test_venv_${{ matrix.python-version }}/bin/activate
+              if [ -n "$FAILED" ]; then
+                  echo "失败的包:$FAILED"
+                  exit 1
+              fi
 
-            # 测试包列表 (可修改)
-            PACKAGES="numpy==2.2.4 torch==2.10.0 psutil==5.9.3"
-
-            FAILED_PACKAGES=""
-            SUCCESS_COUNT=0
-            FAIL_COUNT=0
-
-            for pkg in $PACKAGES; do
-                echo "测试安装: $pkg"
-                START_TIME=$(date +%s)
-
-                if pip install -i https://ruyirepo.ruyicommunity.cn/pypi/simple/ "$pkg" --timeout 30 --no-cache-dir; then
-                    END_TIME=$(date +%s)
-                    DURATION=$((END_TIME - START_TIME))
-                    echo "✓ $pkg 安装成功 (耗时: ${DURATION}s)"
-                    SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
-                else
-                    echo "❌ $pkg 安装失败"
-                    FAILED_PACKAGES="$FAILED_PACKAGES $pkg"
-                    FAIL_COUNT=$((FAIL_COUNT + 1))
-                fi
-                echo "---"
-            done
-
-            deactivate
-
-            # 如果有失败的包，退出并报错
-            if [ -n "$FAILED_PACKAGES" ]; then
-                echo "=========================================="
-                echo "❌ 失败的包:$FAILED_PACKAGES"
-                echo "=========================================="
-                exit 1
-            fi
-
-            echo "========== 所有测试通过 =========="
-            echo "✓ Python ${{ matrix.python-version }} 测试成功"
+              echo "✓ 所有测试通过"
+            '
 
       # 保存编译日志（用于调试）
       - name: Upload build logs
