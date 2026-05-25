@@ -46,6 +46,12 @@ jobs:
             ghcr.io/${{ steps.vars.outputs.owner_lowercase }}/riscv-python-${{ matrix.python-version }}:latest \
             /bin/bash -c '
               set -e
+
+              echo "========== 系统信息 =========="
+              uname -m
+              cat /etc/os-release | head -n 3
+              echo "==============================="
+
               echo "=========================================="
               echo "Python 版本: ${{ matrix.python-version }}"
               echo "=========================================="
