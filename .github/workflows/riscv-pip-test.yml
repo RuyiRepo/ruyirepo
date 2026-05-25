@@ -43,7 +43,8 @@ jobs:
           # 直接运行您的预构建镜像
           docker run --rm \
             --platform linux/riscv64 \
-            ghcr.io/${{ steps.vars.outputs.owner_lowercase }}/riscv-python-${{ matrix.python-version }}:latest \
+            harbor.dev.oepkgs.cn/oepkgs/riscv-ci-env-python-new:${{ matrix.python-version }} \
+            # ghcr.io/${{ steps.vars.outputs.owner_lowercase }}/riscv-python-${{ matrix.python-version }}:latest \
             /bin/bash -c '
               set -e
 
@@ -93,9 +94,6 @@ jobs:
               fi
 
               echo "========== 测试 PyPI 连通性 =========="
-              python3 -m venv /tmp/test_venv
-              source /tmp/test_venv/bin/activate
-
               PACKAGES="numpy==2.2.4 torch==2.10.0 psutil==5.9.3"
               FAILED=""
 
@@ -108,8 +106,6 @@ jobs:
                       FAILED="$FAILED $pkg"
                   fi
               done
-
-              deactivate
 
               if [ -n "$FAILED" ]; then
                   echo "失败的包:$FAILED"
