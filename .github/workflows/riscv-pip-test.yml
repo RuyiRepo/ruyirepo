@@ -31,7 +31,7 @@ jobs:
         uses: uraimo/run-on-arch-action@v3
         with:
           arch: riscv64
-          dockerImage: ghcr.io/${{ steps.vars.outputs.owner_lowercase }}/riscv-python-${{ matrix.python-version }}:latest
+          base_image: ghcr.io/${{ steps.vars.outputs.owner_lowercase }}/riscv-python-${{ matrix.python-version }}:latest
           githubToken: ${{ github.token }}
 
           run: |
