@@ -7,7 +7,6 @@ on:
       python_version:
         description: 'Python version to build'
         required: true
-        default: 'all'
         type: choice
         options:
           - '3.10'
@@ -15,25 +14,10 @@ on:
           - '3.12'
           - '3.13'
           - '3.14'
-          - 'all'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: 
-          - '3.10'
-          - '3.11'
-          - '3.12'
-          - '3.13'
-          - '3.14'
-      fail-fast: false
-
-    if: |
-      github.event.inputs.python_version == 'all' || 
-      github.event.inputs.python_version == matrix.python-version
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -53,14 +37,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Python ${{ matrix.python-version }} image
+      - name: Build and push Python ${{ github.event.inputs.python_version }} image
         uses: docker/build-push-action@v5
         with:
           platforms: linux/riscv64
           push: true
           tags: |
-            ghcr.io/ruyirepo/riscv-python-${{ matrix.python-version }}:latest
-            ghcr.io/ruyirepo/riscv-python-${{ matrix.python-version }}:${{ github.run_number }}
-          file: docker/Dockerfile.riscv-python-${{ matrix.python-version }}
+            ghcr.io/ruyirepo/riscv-python-${{ github.event.inputs.python_version }}:latest
+            ghcr.io/ruyirepo/riscv-python-${{ github.event.inputs.python_version }}:${{ github.run_number }}
+          file: docker/Dockerfile.riscv-python-${{ github.event.inputs.python_version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
