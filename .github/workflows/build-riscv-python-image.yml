@@ -1,12 +1,26 @@
-# .github/workflows/build-riscv-python-image.yml
-name: Build RISC-V Python Multi-Version Image
+# .github/workflows/build-python-images.yml
+name: Build RISC-V Python Images
 
 on:
-  workflow_dispatch:  # 手动触发，或设置 schedule
+  workflow_dispatch:
+    inputs:
+      python_version:
+        description: 'Python version to build'
+        required: true
+        type: choice
+        options:
+          - '3.10'
+          - '3.11'
+          - '3.12'
+          - '3.13'
+          - '3.14'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,12 +40,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push RISC-V Python image
+      - name: Build and push Python ${{ github.event.inputs.python_version }} image
         uses: docker/build-push-action@v5
         with:
           platforms: linux/riscv64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/riscv-python:latest
-            ghcr.io/${{ github.repository_owner }}/riscv-python:3.10-14
-          file: Dockerfile.riscv-python
+            ghcr.io/ruyirepo/riscv-python-${{ github.event.inputs.python_version }}:latest
+            ghcr.io/ruyirepo/riscv-python-${{ github.event.inputs.python_version }}:${{ github.run_number }}
+          file: docker/Dockerfile.riscv-python-${{ github.event.inputs.python_version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

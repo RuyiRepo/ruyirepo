@@ -1,0 +1,60 @@
+# Dockerfile.riscv-python-3.13
+FROM riscv64/ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHON_VERSION=3.13.9
+ENV PYTHON_INSTALL_DIR=/usr/local/python${PYTHON_VERSION}
+
+# 安装编译依赖
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    libncurses5-dev \
+    libgdbm-dev \
+    libdb-dev \
+    libexpat1-dev \
+    liblzma-dev \
+    uuid-dev \
+    tk-dev \
+    wget \
+    curl \
+    ca-certificates \
+    make \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# 下载并编译 Python
+RUN cd /tmp && \
+    wget -q https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tar.xz && \
+    tar -xf Python-${PYTHON_VERSION}.tar.xz && \
+    cd Python-${PYTHON_VERSION} && \
+    ./configure --prefix=${PYTHON_INSTALL_DIR} \
+                --enable-optimizations \
+                --with-lto \
+                --enable-loadable-sqlite-extensions \
+                --enable-ipv6 && \
+    make -j$(nproc) && \
+    make install
+
+# 设置 PATH
+ENV PATH="${PYTHON_INSTALL_DIR}/bin:${PATH}"
+ENV LD_LIBRARY_PATH="${PYTHON_INSTALL_DIR}/lib:${LD_LIBRARY_PATH}"
+
+# 创建软链接
+RUN ln -sf ${PYTHON_INSTALL_DIR}/bin/python3 /usr/bin/python3 && \
+    ln -sf ${PYTHON_INSTALL_DIR}/bin/python3 /usr/bin/python && \
+    ln -sf ${PYTHON_INSTALL_DIR}/bin/pip3 /usr/bin/pip3
+
+# 升级 pip
+RUN python3 -m pip install --upgrade pip
+
+# 验证安装
+RUN python3 --version && pip3 --version
+
+CMD ["/bin/bash"]
