@@ -81,6 +81,17 @@ jobs:
                   exit 1
               fi
 
+              echo "========== pip 平台兼容性检查 =========="
+              echo "检查 RISC-V 64 平台标签支持..."
+              if pip debug --verbose 2>/dev/null | grep -A 50 "Compatible tags:" | grep -q "manylinux_2_28_riscv64"; then
+                  echo "✓ 检测到 manylinux_2_28_riscv64 标签支持"
+              else
+                  echo "❌ 错误: 未检测到 manylinux_2_28_riscv64 标签"
+                  echo "当前 pip 支持的平台标签:"
+                  pip debug --verbose 2>/dev/null | grep -A 50 "Compatible tags:" || true
+                  exit 1
+              fi
+
               echo "========== 测试 PyPI 连通性 =========="
               python3 -m venv /tmp/test_venv
               source /tmp/test_venv/bin/activate
