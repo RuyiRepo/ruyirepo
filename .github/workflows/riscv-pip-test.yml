@@ -43,8 +43,8 @@ jobs:
           # 直接运行您的预构建镜像
           docker run --rm \
             --platform linux/riscv64 \
-            harbor.dev.oepkgs.cn/oepkgs/riscv-ci-env-python-new:${{ matrix.python-version }} \
-            # ghcr.io/${{ steps.vars.outputs.owner_lowercase }}/riscv-python-${{ matrix.python-version }}:latest \
+            # harbor.dev.oepkgs.cn/oepkgs/riscv-ci-env-python-new:${{ matrix.python-version }} \
+            ghcr.io/${{ steps.vars.outputs.owner_lowercase }}/riscv-python-${{ matrix.python-version }}:latest \
             /bin/bash -c '
               set -e
 
