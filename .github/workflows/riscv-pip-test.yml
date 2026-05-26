@@ -148,6 +148,8 @@ jobs:
             ⚙️ 环境要求检查结果:
             - glibc >= 2.38: ✓ 通过 (实际版本 2.39)
             - pip >= 26.0.1: ⚠️ 失败时版本可能低于要求
+            - ⚠️ manylinux_2_28_riscv64 标签可能为被检测到
+            - ⚠️ 仓库可能无法访问
 
             错误详情请查看完整日志:
             https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
